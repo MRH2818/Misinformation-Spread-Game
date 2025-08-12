@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misinformation Spread Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #111827;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 56px 24px 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 56px;
+            color: #111827;
+        }
+
+        .header h1 {
+            font-size: 2.4rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.75;
+            font-weight: 400;
+        }
+
+        .game-section {
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 40px;
+            box-shadow: none;
+            border: none;
+            width: 100%;
+            max-width: 640px;
+        }
+
+        .story-display {
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 28px;
+            border-left: none;
+        }
+
+        .story-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            letter-spacing: -0.2px;
+        }
+
+        .story-content {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 0;
+            color: #334155;
+        }
+
+        .political-significance {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .political-significance h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 0.95rem;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 16px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.2s ease;
+            background: #ffffff;
+            color: #111827;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .form-group textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .btn {
+            background: #111827;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+            margin: 12px;
+            font-family: inherit;
+            box-shadow: 0 1px 2px rgba(0,0,0,.06);
+        }
+
+        #start-screen > .btn {
+            margin-left: 0px;
+        }
+
+        .btn:hover {
+            background: #0f172a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,.08);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0,0,0,.06);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .game-history {
+            margin-top: 30px;
+        }
+
+        .history-item {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .history-item h4 {
+            color: #0f172a;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .round-info {
+            background: #111827;
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 999px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: .2px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(6px);
+            animation: fadeInUp .35s ease forwards;
+        }
+
+        .fade-in-slow {
+            opacity: 0;
+            transform: translateY(8px);
+            animation: fadeInUp .6s ease forwards;
+        }
+
+        .fade-in-fast {
+            opacity: 0;
+            transform: translateY(4px);
+            animation: fadeInUp .2s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error {
+            background: #dc2626;
+            color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+
+        .success {
+            background: #059669;
+            color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+
+        .story-instructions {
+            background: #2a2a2a;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .story-instructions h3 {
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .story-instructions p {
+            color: #d1d5db;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .story-instructions > .btn {
+            background-color:rgb(255, 221, 0);
+            color: black;
+        }
+
+        .retelling-header {
+            background: #2a2a2a;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .retelling-header h3 {
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .retelling-header p {
+            color: #d1d5db;
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        .correction-header {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .correction-header h3 {
+            color: #b91c1c;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+        }
+
+        .correction-header p {
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .correction-box {
+            background: #fee2e2;
+            color: #7f1d1d;
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin: 12px 0 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid #fecaca;
+        }
+
+        .summary-container {
+            background: #2a2a2a;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .summary-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 8px;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #6366f1;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        .summary-text {
+            line-height: 1.8;
+            color: #374151;
+            white-space: pre-line;
+        }
+
+        .game-complete-header {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .game-complete-header h2 {
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-size: 1.8rem;
+            font-weight: 500;
+        }
+
+        .game-complete-header p {
+            color: #d1d5db;
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        #completion-message {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin: 16px 0 24px;
+            border: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📰 Misinformation Spread Game</h1>
+            <p>Tell the story and its political significance. See how information changes as it spreads.</p>
+        </div>
+
+        <div class="game-section">
+            <div id="start-screen">
+                <h2>Welcome to the Misinformation Spread Game!</h2>
+                <p>In this game, you'll be given a story and its political significance. Your task is to retell the story and explain its political implications in your own words.</p>
+                <button class="btn" onclick="startGame()">Start New Game</button>
+            </div>
+
+            <div id="game-screen" class="hidden">
+                <div class="round-info" id="round-display">Round 1</div>
+                
+                <!-- Story Display Phase -->
+                <div id="story-display-phase">
+                    <div class="story-display fade-in" id="story-display">
+                        <div class="story-title" id="story-title"></div>
+                        <div class="story-content" id="story-content"></div>
+                    </div>
+                    
+                    <div class="story-instructions">
+                        <h3>📖 Read the story carefully...</h3>
+                        <p>You will only see this story once. After you click "I'm Ready to Retell", you won't be able to go back and read it again.</p>
+                        <button class="btn" onclick="startRetelling()">I'm Ready to Retell</button>
+                    </div>
+                </div>
+
+                <!-- Retelling Phase -->
+                <div id="retelling-phase" class="hidden fade-in-slow">
+                    <div class="retelling-header">
+                        <h3>🎯 Now retell the story from memory</h3>
+                    </div>
+
+                    <form id="story-form">
+                        <div class="form-group">
+                            <label for="player-story">Tell the story in your own words:</label>
+                            <textarea id="player-story" placeholder="Retell the story you just read from memory..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="player-significance">What does this story mean to you?</label>
+                            <textarea id="player-significance" placeholder="What does this story mean to you? Share your thoughts, feelings, and interpretation..." required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn">Submit Story</button>
+                        <button type="button" class="btn btn-secondary" onclick="showHistory()">View History</button>
+                        <button type="button" class="btn btn-secondary" id="end-game-btn" onclick="showGameSummary()" style="display: none;">End Game</button>
+                    </form>
+                </div>
+
+                <!-- Correction Phase -->
+                <div id="correction-phase" class="hidden fade-in-slow">
+                    <div class="correction-header">
+                        <h3>⚠️ IMPORTANT CORRECTION</h3>
+                        <div id="correction-display" class="correction-box"></div>
+                        <p><strong>Now retell the story with this new information included.</strong></p>
+                    </div>
+
+                    <form id="correction-form">
+                        <div class="form-group">
+                            <label for="correction-story">Tell the story:</label>
+                            <textarea id="correction-story" placeholder="Retell the story including the new information..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="correction-significance">What does this story mean to you?</label>
+                            <textarea id="correction-significance" placeholder="How does this correction change your interpretation of the story?" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn">Submit Corrected Story</button>
+                        <button type="button" class="btn btn-secondary" onclick="showHistory()">View History</button>
+                        <button type="button" class="btn btn-secondary" id="end-game-btn-corrected" onclick="showGameSummary()" style="display: none;">End Game</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="history-screen" class="hidden">
+                <h2>Game History</h2>
+                <div id="history-container"></div>
+                <button class="btn" onclick="backToGame()">Back to Game</button>
+                <button class="btn btn-secondary" onclick="startNewGame()">Start New Game</button>
+                <button class="btn btn-secondary" onclick="showGameSummary()">End Game & Show Summary</button>
+            </div>
+
+            <div id="game-complete-screen" class="hidden">
+                <div class="game-complete-header">
+                    <h2>🎉 Game Complete!</h2>
+                </div>
+                <button class="btn" onclick="startNewGame()">Play Again</button>
+            </div>
+        </div>
+
+        <div id="message-container"></div>
+    </div>
+
+    <script>
+        let currentStory = null;
+        let gameHistory = [];
+
+        function showMessage(message, type = 'success') {
+            const container = document.getElementById('message-container');
+            container.innerHTML = `<div class="${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        function startGame() {
+            const startBtn = document.querySelector('#start-screen .btn');
+            if (startBtn) {
+                startBtn.disabled = true;
+                startBtn.textContent = 'Loading...';
+            }
+            fetch('/start_game')
+                .then(response => response.json())
+                .then(data => {
+                    currentStory = data.story;
+                    displayStory(currentStory);
+                    document.getElementById('start-screen').classList.add('hidden');
+                    document.getElementById('game-screen').classList.remove('hidden');
+                    document.getElementById('history-screen').classList.add('hidden');
+                    document.getElementById('game-complete-screen').classList.add('hidden');
+                    // Show story display phase first
+                    document.getElementById('story-display-phase').classList.remove('hidden');
+                    document.getElementById('retelling-phase').classList.add('hidden');
+                    document.getElementById('correction-phase').classList.add('hidden');
+                    updateRoundDisplay(data.round);
+                    hideEndGameButton(); // Hide End Game button at start
+                })
+                .catch(error => {
+                    console.error('Error starting game:', error);
+                    showMessage('Error starting game. Please try again.', 'error');
+                })
+                .finally(() => {
+                    if (startBtn) {
+                        startBtn.disabled = false;
+                        startBtn.textContent = 'Start New Game';
+                    }
+                });
+        }
+
+        function startRetelling() {
+            const retellBtn = document.querySelector('#story-display-phase .btn');
+            if (retellBtn) {
+                retellBtn.disabled = true;
+                retellBtn.textContent = 'Loading...';
+            }
+            // Simulate a short delay for UX (remove setTimeout if not needed)
+            setTimeout(() => {
+                // Hide the story and show the retelling phase
+                document.getElementById('story-display-phase').classList.add('hidden');
+                document.getElementById('retelling-phase').classList.remove('hidden');
+                showMessage('Story hidden! Now retell it from memory.', 'success');
+                if (retellBtn) {
+                    retellBtn.disabled = false;
+                    retellBtn.textContent = `I'm Ready to Retell`;
+                }
+            }, 400); // 400ms for visual feedback
+        }
+
+        function displayStory(story) {
+            document.getElementById('story-title').textContent = story.title;
+            document.getElementById('story-content').textContent = story.content;
+        }
+
+        function updateRoundDisplay(round) {
+            document.getElementById('round-display').textContent = `Round ${round}`;
+            
+            // Show End Game button after round 1 (when player has some history)
+            if (round > 1) {
+                showEndGameButton();
+            }
+        }
+
+        document.getElementById('story-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const storyContent = document.getElementById('player-story').value;
+            const politicalSignificance = document.getElementById('player-significance').value;
+            
+            if (!storyContent.trim() || !politicalSignificance.trim()) {
+                showMessage('Please fill in both fields.', 'error');
+                return;
+            }
+
+            fetch('/submit_story', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    story_content: storyContent,
+                    political_significance: politicalSignificance
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message);
+                    document.getElementById('story-form').reset();
+                    updateRoundDisplay(data.round);
+                    
+                    // Show correction phase
+                    if (data.correction) {
+                        showCorrection(data.correction);
+                    } else {
+                        // Get a new story for the next round
+                        fetch('/generate_story')
+                            .then(response => response.json())
+                            .then(storyData => {
+                                currentStory = storyData.story;
+                                displayStory(currentStory);
+                                // Reset to story display phase for next round
+                                document.getElementById('story-display-phase').classList.remove('hidden');
+                                document.getElementById('retelling-phase').classList.add('hidden');
+                                document.getElementById('correction-phase').classList.add('hidden');
+                            });
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting story:', error);
+                showMessage('Error submitting story. Please try again.', 'error');
+            });
+        });
+
+        function showCorrection(correction) {
+            document.getElementById('correction-display').textContent = correction.correction;
+            document.getElementById('retelling-phase').classList.add('hidden');
+            document.getElementById('correction-phase').classList.remove('hidden');
+        }
+
+        document.getElementById('correction-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const correctionStory = document.getElementById('correction-story').value;
+            const correctionSignificance = document.getElementById('correction-significance').value;
+            
+            if (!correctionStory.trim() || !correctionSignificance.trim()) {
+                showMessage('Please fill in both fields.', 'error');
+                return;
+            }
+
+            // Submit the corrected story
+            fetch('/submit_corrected_story', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    story_content: correctionStory,
+                    political_significance: correctionSignificance
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message);
+                    document.getElementById('correction-form').reset();
+                    updateRoundDisplay(data.round);
+                    
+                    // Check if game is over
+                    if (data.game_over) {
+                        showGameComplete();
+                    } else {
+                        // Get a new story for the next round
+                        fetch('/generate_story')
+                            .then(response => response.json())
+                            .then(storyData => {
+                                currentStory = storyData.story;
+                                displayStory(currentStory);
+                                // Reset to story display phase for next round
+                                document.getElementById('story-display-phase').classList.remove('hidden');
+                                document.getElementById('retelling-phase').classList.add('hidden');
+                                document.getElementById('correction-phase').classList.add('hidden');
+                            });
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting corrected story:', error);
+                showMessage('Error submitting corrected story. Please try again.', 'error');
+            });
+        });
+
+        function showHistory() {
+            fetch('/get_game_history')
+                .then(response => response.json())
+                .then(data => {
+                    gameHistory = data.history;
+                    displayHistory(data.history);
+                    document.getElementById('game-screen').classList.add('hidden');
+                    document.getElementById('history-screen').classList.remove('hidden');
+                })
+                .catch(error => {
+                    console.error('Error loading history:', error);
+                    showMessage('Error loading history.', 'error');
+                });
+        }
+
+        function displayHistory(history) {
+            const container = document.getElementById('history-container');
+            
+            if (history.length === 0) {
+                container.innerHTML = '<p>No history yet. Play a round first!</p>';
+                return;
+            }
+
+            let html = '';
+            history.forEach((item, index) => {
+                html += `
+                    <div class="history-item">
+                        <h4>Round ${item.round}</h4>
+                        <p><strong>Original Story:</strong> ${item.original_story.content}</p>
+                        ${item.correction ? `<p><strong>Correction:</strong> ${item.correction.explanation}</p>` : ''}
+                        <p><strong>Your Version:</strong> ${item.player_story}</p>
+                        <p><strong>What it meant to you:</strong> ${item.player_significance}</p>
+                        ${item.is_corrected ? '<p><em>This was a corrected version</em></p>' : ''}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function backToGame() {
+            document.getElementById('history-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+        }
+
+        function startNewGame() {
+            startGame();
+        }
+
+        function showGameComplete() {
+            // Hide all game screens
+            document.getElementById('story-display-phase').classList.add('hidden');
+            document.getElementById('retelling-phase').classList.add('hidden');
+            document.getElementById('correction-phase').classList.add('hidden');
+            document.getElementById('history-screen').classList.add('hidden');
+            
+            // Show game complete screen
+            document.getElementById('game-complete-screen').classList.remove('hidden');
+        }
+
+        function showEndGameButton() {
+            document.getElementById('end-game-btn').style.display = 'inline-block';
+            document.getElementById('end-game-btn-corrected').style.display = 'inline-block';
+        }
+
+        function hideEndGameButton() {
+            document.getElementById('end-game-btn').style.display = 'none';
+            document.getElementById('end-game-btn-corrected').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
