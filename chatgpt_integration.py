@@ -44,11 +44,7 @@ def generate_story_with_chatgpt():
                     "role": "system", 
                     "content": """You are an educational game content generator specializing in politically charged news stories.
                     Create detailed, specific stories with complex political implications that include:
-                    - Specific names, relationships, and connections between people
-                    - Financial details, donations, and quid-pro-quo arrangements
-                    - Multiple layers of political intrigue and corruption
-                    - Specific consequences and investigations
-                    - Realistic but dramatic political scenarios
+                    - Realistic but dramatic minor/major local community issues, political, or corporate scenarios involving racial tensions, corruption, gerrymandering, or something else interesting.
                     
                     Each story should be engaging and show how information can be interpreted differently."""
                 },
@@ -56,7 +52,7 @@ def generate_story_with_chatgpt():
                     "role": "user", 
                     "content": """Generate a detailed news story with juicy political/corporate details including:
                     1. A catchy title
-                    2. A story (3-4 sentences) with specific names, relationships, financial details, and political connections
+                    2. A story (3-4 sentences) with specific details
                     
                     Format the response as a JSON object with keys: title, content
 
@@ -82,7 +78,7 @@ def generate_story_with_chatgpt():
         print(f"Error generating story: {e}")
         # Return a fallback story
         return {
-            "title": "Sample Story",
+            "title": "Corruption in Mayor's Office",
             "content": "A local community center faced budget cuts, affecting after-school programs for children. The mayor's office claimed the cuts were necessary due to declining tax revenue, but critics pointed out that the mayor had recently approved a $2 million renovation of his own office suite. The community center director, who had been vocal about the cuts, was fired shortly after speaking to the local newspaper about the impact on children."
         }
 
@@ -144,4 +140,4 @@ if __name__ == "__main__":
     for i, story in enumerate(stories):
         print(f"\nStory {i+1}:")
         print(f"Title: {story['title']}")
-        print(f"Content: {story['content']}") 
+        print(f"Content: {story['content']}")

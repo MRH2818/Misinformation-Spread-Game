@@ -51,7 +51,7 @@ def start_game():
         print(f"Error generating story: {e}")
         # Fallback to a simple story if API fails
         fallback_story = {
-            "title": "Emergency Story",
+            "title": "Corruption in Mayor's Office",
             "content": "A local community center faced budget cuts, affecting after-school programs for children. The mayor's office claimed the cuts were necessary due to declining tax revenue, but critics pointed out that the mayor had recently approved a $2 million renovation of his own office suite. The community center director, who had been vocal about the cuts, was fired shortly after speaking to the local newspaper about the impact on children."
         }
         session['current_story'] = fallback_story
@@ -106,7 +106,7 @@ def generate_correction(story):
                 },
                 {
                     "role": "user",
-                    "content": f"""Generate a correction for this story or correction:\n\nTitle: {story['title']}\nContent: {story['content']}\n\nIf this is already a correction, subvert the gist of the previous correction.\nMake the topic different, and expand on a new corporate/political/local initiative or angle. Make the correction 1 sentence long."""
+                    "content": f"""Generate a correction for this story, adding new details and/or changing specific details to subvert the gist of the story:\n\nTitle: {story['title']}\nContent: {story['content']}\n\nIf this is already a correction, subvert the gist of the previous correction. Make the correction 1 sentence long."""
                 }
             ],
             max_tokens=config.get('max_tokens', 300),

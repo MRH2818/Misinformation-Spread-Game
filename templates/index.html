@@ -463,15 +463,12 @@
                             <label for="player-story">Tell the story in your own words:</label>
                             <textarea id="player-story" placeholder="Retell the story you just read from memory..." required></textarea>
                         </div>
-                        
                         <div class="form-group">
                             <label for="player-significance">What does this story mean to you?</label>
                             <textarea id="player-significance" placeholder="What does this story mean to you? Share your thoughts, feelings, and interpretation..." required></textarea>
                         </div>
-                        
                         <button type="submit" class="btn">Submit Story</button>
                         <button type="button" class="btn btn-secondary" onclick="showHistory()">View History</button>
-                        <button type="button" class="btn btn-secondary" id="end-game-btn" onclick="showGameSummary()" style="display: none;">End Game</button>
                     </form>
                 </div>
 
@@ -488,15 +485,12 @@
                             <label for="correction-story">Tell the story:</label>
                             <textarea id="correction-story" placeholder="Retell the story including the new information..." required></textarea>
                         </div>
-                        
                         <div class="form-group">
                             <label for="correction-significance">What does this story mean to you?</label>
                             <textarea id="correction-significance" placeholder="How does this correction change your interpretation of the story?" required></textarea>
                         </div>
-                        
                         <button type="submit" class="btn">Submit Corrected Story</button>
                         <button type="button" class="btn btn-secondary" onclick="showHistory()">View History</button>
-                        <button type="button" class="btn btn-secondary" id="end-game-btn-corrected" onclick="showGameSummary()" style="display: none;">End Game</button>
                     </form>
                 </div>
             </div>
@@ -506,7 +500,6 @@
                 <div id="history-container"></div>
                 <button class="btn" onclick="backToGame()">Back to Game</button>
                 <button class="btn btn-secondary" onclick="startNewGame()">Start New Game</button>
-                <button class="btn btn-secondary" onclick="showGameSummary()">End Game & Show Summary</button>
             </div>
 
             <div id="game-complete-screen" class="hidden">
@@ -529,7 +522,7 @@
             container.innerHTML = `<div class="${type}">${message}</div>`;
             setTimeout(() => {
                 container.innerHTML = '';
-            }, 5000);
+            }, 500);
         }
 
         function startGame() {
@@ -552,7 +545,6 @@
                     document.getElementById('retelling-phase').classList.add('hidden');
                     document.getElementById('correction-phase').classList.add('hidden');
                     updateRoundDisplay(data.round);
-                    hideEndGameButton(); // Hide End Game button at start
                 })
                 .catch(error => {
                     console.error('Error starting game:', error);
@@ -592,11 +584,6 @@
 
         function updateRoundDisplay(round) {
             document.getElementById('round-display').textContent = `Round ${round}`;
-            
-            // Show End Game button after round 1 (when player has some history)
-            if (round > 1) {
-                showEndGameButton();
-            }
         }
 
         document.getElementById('story-form').addEventListener('submit', function(e) {
@@ -739,7 +726,7 @@
                     <div class="history-item">
                         <h4>Round ${item.round}</h4>
                         <p><strong>Original Story:</strong> ${item.original_story.content}</p>
-                        ${item.correction ? `<p><strong>Correction:</strong> ${item.correction.explanation}</p>` : ''}
+                        ${item.correction ? `<p><strong>Correction:</strong> ${item.correction.correction}</p>` : ''}
                         <p><strong>Your Version:</strong> ${item.player_story}</p>
                         <p><strong>What it meant to you:</strong> ${item.player_significance}</p>
                         ${item.is_corrected ? '<p><em>This was a corrected version</em></p>' : ''}
@@ -768,16 +755,6 @@
             
             // Show game complete screen
             document.getElementById('game-complete-screen').classList.remove('hidden');
-        }
-
-        function showEndGameButton() {
-            document.getElementById('end-game-btn').style.display = 'inline-block';
-            document.getElementById('end-game-btn-corrected').style.display = 'inline-block';
-        }
-
-        function hideEndGameButton() {
-            document.getElementById('end-game-btn').style.display = 'none';
-            document.getElementById('end-game-btn-corrected').style.display = 'none';
         }
     </script>
 </body>
